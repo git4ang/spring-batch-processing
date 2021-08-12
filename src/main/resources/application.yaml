@@ -6,7 +6,7 @@ spring:
 
   batch:
     job:
-      enabled: false
+      enabled: true
 
   datasource:
     url: jdbc:h2:mem:testdb
@@ -21,4 +21,4 @@ spring:
       settings:
         web-allow-others: true
 
-inputFileFilm: classpath:/film.csv.csv
+inputFileFilm: classpath:/film.csv

@@ -3,6 +3,7 @@ package ang.neggaw.batchs.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by:
@@ -19,7 +20,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class FilmOutput {
+public class FilmOutput implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
