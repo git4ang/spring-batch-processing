@@ -1,0 +1,24 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: spring-batch-processing-film.csv
+
+  batch:
+    job:
+      enabled: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+
+inputFileFilm: classpath:/film.csv.csv
