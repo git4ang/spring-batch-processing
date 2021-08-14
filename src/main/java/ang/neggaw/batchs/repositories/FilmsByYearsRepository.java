@@ -1,6 +1,6 @@
 package ang.neggaw.batchs.repositories;
 
-import ang.neggaw.batchs.models.Film;
+import ang.neggaw.batchs.models.FilmsByYears;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -12,4 +12,4 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  */
 
 @RepositoryRestResource
-public interface FilmRepository extends JpaRepository<Film, Long> { }
+public interface FilmsByYearsRepository extends JpaRepository<FilmsByYears, Long> { }

@@ -1,6 +1,6 @@
-package ang.neggaw.batchs.steps;
+package ang.neggaw.batchs.stepItems;
 
-import ang.neggaw.batchs.models.FilmOutput;
+import ang.neggaw.batchs.models.Film;
 import ang.neggaw.batchs.repositories.FilmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemWriter;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class FilmItemWriter implements ItemWriter<FilmOutput> {
+public class FilmItemWriter implements ItemWriter<Film> {
 
     private final FilmRepository filmRepository;
 
     @Override
-    public void write(List<? extends FilmOutput> list) throws Exception {
+    public void write(List<? extends Film> list) throws Exception {
         filmRepository.saveAll(list);
     }
 }

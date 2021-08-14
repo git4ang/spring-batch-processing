@@ -2,6 +2,7 @@ package ang.neggaw.batchs.models;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -11,16 +12,23 @@ import java.io.Serializable;
  * @since 12-08-2021 12:50
  */
 
+@Entity
+@Table(name = "films")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class Film implements Serializable {
 
-    private String year; // int
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idFilm;
 
-    private String length; // int
+    private String year; // Integer
+
+    private String length; // Integer
 
     private String title;
 
@@ -34,7 +42,7 @@ public class Film implements Serializable {
 
     private String popularity;
 
-    private String awards; // boolean
+    private String awards; // Boolean
 
     private String  image;
 }

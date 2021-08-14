@@ -13,14 +13,14 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "film_outputs")
+@Table(name = "films_by_years")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Builder
-public class FilmOutput implements Serializable {
+public class FilmsByYears implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

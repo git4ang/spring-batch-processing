@@ -1,10 +1,11 @@
-package ang.neggaw.batchs.steps;
+package ang.neggaw.batchs.stepItems;
 
+import ang.neggaw.batchs.listeners.*;
 import ang.neggaw.batchs.models.Film;
-import ang.neggaw.batchs.models.FilmOutput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -16,10 +17,12 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by:
@@ -29,32 +32,51 @@ import org.springframework.stereotype.Component;
  */
 
 @RequiredArgsConstructor
-@Component
-public class SpringBatchReaderConfig {
+@EnableBatchProcessing
+@Configuration
+public class BatchConfigFilm {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final ItemReader<Film> filmItemReader;
-    private final ItemProcessor<Film, FilmOutput> filmFilmOutputItemProcessor;
-    private final ItemWriter<FilmOutput> filmOutputItemWriter;
+
+    @Qualifier(value = "filmFlatFileItemReader") private final ItemReader<Film> filmItemReader;
+    private final ItemProcessor<Film, Film> filmFilmItemProcessor;
+    private final ItemWriter<Film> filmItemWriter;
+    private final FilmJobExecutionListener filmJobExecutionListener;
+    private final FilmItemReaderListener filmItemReaderListener;
+    private final FilmItemProcessorListener filmItemProcessorListener;
+    private final FilmItemWriterListener filmItemWriterListener;
 
     @Bean
-    public Job myJobFilm() {
-        Step step = stepBuilderFactory.get("step-data-film")
-                .<Film, FilmOutput>chunk(100)
+    public Step stepFilms() {
+
+        return stepBuilderFactory.get("step-film")
+                .<Film, Film>chunk(100)
                 .reader(filmItemReader)
-                .processor(filmFilmOutputItemProcessor)
-                .writer(filmOutputItemWriter)
-                .build();
-        return jobBuilderFactory.get("job-data-film")
-                .incrementer(new RunIdIncrementer())
-                .start(step)
+                .processor(filmFilmItemProcessor)
+                .writer(filmItemWriter)
+                .listener(filmItemReaderListener)
+                .listener(filmItemProcessorListener)
+                .listener(filmItemWriterListener)
                 .build();
     }
 
     @Bean
+    public Job jobFilm() {
+
+        return jobBuilderFactory.get("job-film")
+                .incrementer(new RunIdIncrementer())
+                .preventRestart()
+                .listener(filmJobExecutionListener)
+                .start(stepFilms())
+//                .end()
+                .build();
+    }
+
+    @Bean
+    @Primary
     @StepScope
-    public FlatFileItemReader<Film> reader(@Value(value = "${inputFileFilm}") Resource resource) {
+    public FlatFileItemReader<Film> filmFlatFileItemReader(@Value(value = "${inputFileFilm}") Resource resource) {
 
         FlatFileItemReader<Film> reader = new FlatFileItemReader<>();
         DefaultLineMapper<Film> lineMapper = new DefaultLineMapper<>();
