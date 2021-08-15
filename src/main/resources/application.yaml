@@ -21,4 +21,11 @@ spring:
       settings:
         web-allow-others: true
 
-inputFileFilm: classpath:/film.csv
+app4ang:
+  file:
+    input-file-name: "classpath:/film.csv"
+    header-names: "Year; Length; Title; Subject; Actor; Actress; Director; Popularity; Awards; Image"
+    delimiter: ";"
+
+
+

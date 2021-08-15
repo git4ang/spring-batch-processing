@@ -36,6 +36,15 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class BatchConfigFilm {
 
+    @Value(value = "${app4ang.file.header-names}")
+    private String names;
+
+    @Value(value = "${app4ang.file.input-file-name}")
+    private Resource resource;
+
+    @Value(value = "${app4ang.file.delimiter}")
+    private String delimiter;
+
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
@@ -76,7 +85,7 @@ public class BatchConfigFilm {
     @Bean
     @Primary
     @StepScope
-    public FlatFileItemReader<Film> filmFlatFileItemReader(@Value(value = "${inputFileFilm}") Resource resource) {
+    public FlatFileItemReader<Film> filmFlatFileItemReader() {
 
         FlatFileItemReader<Film> reader = new FlatFileItemReader<>();
         DefaultLineMapper<Film> lineMapper = new DefaultLineMapper<>();
@@ -87,9 +96,9 @@ public class BatchConfigFilm {
         reader.setResource(resource);
         reader.setLinesToSkip(2);
 
-        tokenizer.setDelimiter(";");
+        tokenizer.setDelimiter(delimiter);
         tokenizer.setStrict(false);
-        tokenizer.setNames("year", "length", "title", "subject", "actor", "actress", "director", "popularity", "awards", "image");
+        tokenizer.setNames(names.split(";".strip()));
         lineMapper.setLineTokenizer(tokenizer);
 
         fieldSetMapper.setTargetType(Film.class);
