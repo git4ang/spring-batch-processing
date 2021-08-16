@@ -9,13 +9,17 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 /**
  * Created by:
@@ -31,6 +35,7 @@ public class BatchConfigFilmsByYears {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final JobRepository jobRepository;
 
     @Qualifier(value = "filmsByYearsItemReader") private final ItemReader<Film> filmOutputItemReader;
     private final ItemProcessor<Film, FilmsByYears> filmOutputFilmOutputItemProcessor;
@@ -41,6 +46,15 @@ public class BatchConfigFilmsByYears {
     private final FilmsByYearsItemWriterListener filmsByYearsItemWriterListener;
 
     @Qualifier("stepFilms") private final Step stepFilms;
+
+    @Bean
+    public JobLauncher jobLauncherFilmsByYears() throws Exception {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
 
     @Bean
     public Step stepFilmsByYears() {

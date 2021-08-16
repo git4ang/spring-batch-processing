@@ -9,7 +9,10 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -23,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 /**
  * Created by:
@@ -47,6 +51,7 @@ public class BatchConfigFilm {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final JobRepository jobRepository;
 
     @Qualifier(value = "filmFlatFileItemReader") private final ItemReader<Film> filmItemReader;
     private final ItemProcessor<Film, Film> filmFilmItemProcessor;
@@ -55,6 +60,15 @@ public class BatchConfigFilm {
     private final FilmItemReaderListener filmItemReaderListener;
     private final FilmItemProcessorListener filmItemProcessorListener;
     private final FilmItemWriterListener filmItemWriterListener;
+
+    @Bean
+    public JobLauncher jobLauncherFilm() throws Exception {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
 
     @Bean
     public Step stepFilms() {
